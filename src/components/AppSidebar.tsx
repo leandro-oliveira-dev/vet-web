@@ -24,6 +24,11 @@ export function AppSidebar() {
             icon: User,
         },
         {
+            title: "Cliente",
+            url: "/client",
+            icon: User,
+        },
+        {
             title: "Agendamento Veterinario",
             url: "/vet",
             icon: Calendar,
