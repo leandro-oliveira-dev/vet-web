@@ -103,7 +103,7 @@ export default function PetsPage() {
         <>
             <Dialog>
                 <div className="p-8">
-                    <h1 className="mb-4 text-2xl">Users</h1>
+                    <h1 className="mb-4 text-2xl">Pet</h1>
                     <div className="flex flex-col">
                         <DialogTrigger asChild>
                             <Button
@@ -120,9 +120,9 @@ export default function PetsPage() {
                         <Table>
                             <TableHeader>
                                 <TableRow>
+                                    <TableHead>Age</TableHead>
                                     <TableHead>Name</TableHead>
                                     <TableHead>Breed</TableHead>
-                                    <TableHead>Age</TableHead>
                                     <TableHead>ClientId</TableHead>
                                 </TableRow>
                             </TableHeader>

@@ -29,6 +29,11 @@ export function AppSidebar() {
             icon: User,
         },
         {
+            title: "Pet",
+            url: "/pet",
+            icon: User,
+        },
+        {
             title: "Agendamento Veterinario",
             url: "/vet",
             icon: Calendar,
