@@ -24,71 +24,78 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 
 
-interface Auth {
-    email: string;
-}
-interface User {
+
+interface Pet {
+
     id: number;
     name: string;
-    email: string
-    auth: Auth;
-    phoneNumber: string;
-    address: string;
+    breed: string;
+    age: number;
+    clientId: number;
+
 }
 
-export default function UsersPage() {
-    const [users, setUsers] = useState<User[]>([]);
+export default function PetsPage() {
+    const [pets, setPets] = useState<Pet[]>([]);
     const [formData, setFormData] = useState({
         id: 0, // Adicionado para edição
         name: "",
-        email: "",
-        phoneNumber: "",
-        address: "",
+        breed: "",
+        age: 0,
+        clientId: 0,
+
     });
+
     const [isEditing, setIsEditing] = useState(false); // Indica se é edição ou criação
 
     useEffect(() => {
-        api.get<User[]>("/users")
-            .then((response) => setUsers(response.data))
+        api.get<Pet[]>("/pets")
+            .then((response) => setPets(response.data))
             .catch((error) => console.log(error));
+
     }, []);
 
     const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const { name, value } = e.target;
         setFormData({ ...formData, [name]: value });
+
     };
 
-    const handleCreateOrUpdateUser = async () => {
+    const handleCreateOrUpdatePet = async () => {
         try {
             if (isEditing) {
-                // Atualizar usuário existente
-                const response = await api.put<{ message: string; updatedUser: User }>(
-                    `/users/${formData.id}`,
+                // Atualizar pet existente
+                const response = await api.put<{ message: string; updatedPet: Pet }>(
+                    `/pets/${formData.id}`,
                     formData
                 );
-                alert("Usuário atualizado com sucesso!");
-                setUsers((prevUsers) =>
-                    prevUsers.map((user) =>
-                        user.id === response.data.updatedUser.id ? response.data.updatedUser : user
+
+                alert("Pet atualizado com sucesso!");
+
+                setPets((prevPets) =>
+                    prevPets.map((pet) =>
+                        pet.id === response.data.updatedPet.id ? response.data.updatedPet : pet
                     )
                 );
+
             } else {
-                // Criar novo usuário
-                const response = await api.post<{ message: string; newUser: User }>("/users", formData);
-                alert("Usuário criado com sucesso!");
-                setUsers((prevUsers) => [...prevUsers, response.data.newUser]);
+                // Criar novo pet
+                const response = await api.post<{ message: string; newPet: Pet }>("/pets", formData);
+                alert("Pet criado com sucesso!");
+                setPets((prevPets) => [...prevPets, response.data.newPet]);
             }
 
-            setFormData({ id: 0, name: "", email: "", phoneNumber: "", address: "" });
+            setFormData({ id: 0, name: "", breed: "", age: 0, clientId: 0 });
             setIsEditing(false);
+
         } catch (error) {
             console.error(error);
-            alert("Erro ao salvar o usuário.");
+            alert("Erro ao salvar o pet.");
         }
     };
 
-    const handleEditClick = (user: User) => {
-        setFormData(user);
+    const handleEditClick = (pet: Pet) => {
+        setFormData(pet);
         setIsEditing(true);
     };
 
@@ -103,7 +110,7 @@ export default function UsersPage() {
                                 size="sm"
                                 className="flex-1 self-end"
                                 onClick={() => {
-                                    setFormData({ id: 0, name: "", email: "", phoneNumber: "", address: "" });
+                                    setFormData({ id: 0, name: "", breed: "", age: 0, clientId: 0 });
                                     setIsEditing(false);
                                 }}
                             >
@@ -113,25 +120,24 @@ export default function UsersPage() {
                         <Table>
                             <TableHeader>
                                 <TableRow>
-                                    <TableHead>Email</TableHead>
                                     <TableHead>Name</TableHead>
-                                    <TableHead>PhoneNumber</TableHead>
-                                    <TableHead>Address</TableHead>
-                                    <TableHead>Actions</TableHead>
+                                    <TableHead>Breed</TableHead>
+                                    <TableHead>Age</TableHead>
+                                    <TableHead>ClientId</TableHead>
                                 </TableRow>
                             </TableHeader>
                             <TableBody>
-                                {users.map((user) => (
-                                    <TableRow key={user.id}>
-                                        <TableCell className="font-medium">{user.auth.email}</TableCell>
-                                        <TableCell className="font-medium">{user.name}</TableCell>
-                                        <TableCell className="font-medium">{user.phoneNumber}</TableCell>
-                                        <TableCell className="font-medium">{user.address}</TableCell>
+                                {pets.map((pet) => (
+                                    <TableRow key={pet.id}>
+                                        <TableCell className="font-medium">{pet.age}</TableCell>
+                                        <TableCell className="font-medium">{pet.name}</TableCell>
+                                        <TableCell className="font-medium">{pet.breed}</TableCell>
+                                        <TableCell className="font-medium">{pet.clientId}</TableCell>
                                         <TableCell className="font-medium">
                                             <DialogTrigger asChild>
                                                 <Button
                                                     size="sm"
-                                                    onClick={() => handleEditClick(user)}
+                                                    onClick={() => handleEditClick(pet)}
                                                 >
                                                     EDIT
                                                 </Button>
@@ -148,18 +154,18 @@ export default function UsersPage() {
                     <DialogHeader>
                         <DialogTitle>{isEditing ? "Edit User" : "Create User"}</DialogTitle>
                         <DialogDescription>
-                            Preencha os campos abaixo para {isEditing ? "editar" : "criar"} o usuário.
+                            Preencha os campos abaixo para {isEditing ? "editar" : "criar"} o pet.
                         </DialogDescription>
                     </DialogHeader>
                     <div className="grid gap-4 py-4">
                         <div className="grid grid-cols-4 items-center gap-4">
                             <Label htmlFor="email" className="text-right">
-                                Email
+                                AGE
                             </Label>
                             <Input
                                 id="email"
                                 name="email"
-                                value={formData.email}
+                                value={formData.age}
                                 onChange={handleInputChange}
                                 className="col-span-3"
                             />
@@ -178,36 +184,37 @@ export default function UsersPage() {
                         </div>
                         <div className="grid grid-cols-4 items-center gap-4">
                             <Label htmlFor="phoneNumber" className="text-right">
-                                PhoneNumber
+                                Breed
                             </Label>
                             <Input
                                 id="phoneNumber"
                                 name="phoneNumber"
-                                value={formData.phoneNumber}
+                                value={formData.breed}
                                 onChange={handleInputChange}
                                 className="col-span-3"
                             />
                         </div>
                         <div className="grid grid-cols-4 items-center gap-4">
                             <Label htmlFor="address" className="text-right">
-                                Address
+                                Cliente
                             </Label>
                             <Input
                                 id="address"
                                 name="address"
-                                value={formData.address}
+                                value={formData.clientId}
                                 onChange={handleInputChange}
                                 className="col-span-3"
                             />
                         </div>
                     </div>
                     <DialogFooter>
-                        <Button type="submit" onClick={handleCreateOrUpdateUser}>
+                        <Button type="submit" onClick={handleCreateOrUpdatePet}>
                             {isEditing ? "Update" : "Save"} Changes
                         </Button>
                     </DialogFooter>
                 </DialogContent>
             </Dialog>
         </>
-    );
+    )
+
 }
